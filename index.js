@@ -1,4 +1,3 @@
-// var jsx = require('jsx-transpiler');
 var reactServer = require('react-dom/server');
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -41,17 +40,24 @@ var jsxCode = "<a  onClick={5} href='#'>Back to top{5}<Test/><span onclick='aler
 console.log('JSX Code is: ', jsxCode);
 
 
-//
+//Renders the jsx using a modified factory so we can intercept element creation
 var jsx = require('jsx-transform');
 var j = jsx.fromString(jsxCode, {
   factory: 'actionRemover'
 });
+
 j = String(j).replace(/"/g, "'").trim()
 console.log('Compiled Code is: ', j);
 
+// use 'localeval' for safely evaluating compiled code
 var r = localeval(j,{ actionRemover: actionRemover,Test: Test, React: React});
+
+// render this as a string for inspection
 var r2 = reactServer.renderToString(r);
 console.log('Rendered String is: ', r2);
+
+
+//Alternative code using a different jsx-transpiler (without support for a modified factory)
 /*
 var jsx = require('jsx-transpiler');
 var j = jsx.compile(jsxCode);
